@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
 
-import { updateName } from '../../../store/userSlice';
+import { updateName } from '../userSlice';
 
 import Button from '../../../pages/button/Button';
 
