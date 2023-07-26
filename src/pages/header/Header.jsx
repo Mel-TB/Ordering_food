@@ -4,8 +4,8 @@ import UserName from '../../features/user/CreateUser/UserName';
 
 const Header = () => {
   return (
-    <header className="border-b border-slate-300 bg-emerald-600 px-4 py-3 uppercase">
-      <Link to="/" className="tracking-widest">
+    <header className="flex items-center justify-between border-b border-zinc-200 bg-amber-400 px-4 py-3  uppercase sm:px-6">
+      <Link to="/" className="font-medium tracking-widest text-red-800">
         Fast Order
       </Link>
 
