@@ -24,6 +24,7 @@ const fetchAddress = async () => {
 */
 
 import { createSlice } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 
 const initialState = {
   username: '',
@@ -42,3 +43,10 @@ const userSlice = createSlice({
 export const { updateName } = userSlice.actions;
 
 export default userSlice.reducer;
+
+const getUsername = (state) => state.user.username;
+
+export const getUsernameSelector = createSelector(
+  [getUsername],
+  (username) => username,
+);

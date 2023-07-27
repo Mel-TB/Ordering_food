@@ -16,9 +16,7 @@ const CartOverview = () => {
         <span>{totalCartQuantity} pizzas</span>
         <span>{formatCurrency(totalCartPrice)} </span>
       </p>
-      <Link to="/cart" cart>
-        Open cart &rarr;
-      </Link>
+      <Link to="/cart">Open cart &rarr;</Link>
     </div>
   );
 };
