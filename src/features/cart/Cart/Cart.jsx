@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 
 import { clearCart, getCart } from '../cartslice';
-import { getUsernameSelector } from '../../user/userSlice';
+import { getUser } from '../../user/userSlice';
 
 import CartItem from '../CartItem/CartItem';
 import EmptyCart from '../EmptyCart/EmptyCart';
@@ -11,7 +11,7 @@ import Button from '../../../pages/button/Button';
 
 const Cart = () => {
   const cart = useSelector(getCart);
-  const username = useSelector(getUsernameSelector);
+  const { username } = useSelector(getUser);
   const dispatch = useDispatch();
 
   const handlerClearCart = () => {

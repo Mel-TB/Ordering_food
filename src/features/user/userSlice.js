@@ -1,11 +1,18 @@
-/*
+import {
+  createSlice,
+  createSelector,
+  createAsyncThunk,
+} from '@reduxjs/toolkit';
+
+import { getAddress } from '../../services/apiGeocoding';
+
 const getPosition = () => {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject);
   });
 };
 
-const fetchAddress = async () => {
+export const fetchAddress = createAsyncThunk('user/fetchAdress', async () => {
   // 1) We get the user's geolocation position
   const positionObj = await getPosition();
   const position = {
@@ -18,16 +25,16 @@ const fetchAddress = async () => {
   const address = `${addressObj?.locality}, ${addressObj?.city} ${addressObj?.postcode}, ${addressObj?.countryName}`;
 
   // 3) Then we return an object with the data that we are interested in
+  // Payload fullfilled state
   return { position, address };
-};
-
-*/
-
-import { createSlice } from '@reduxjs/toolkit';
-import { createSelector } from 'reselect';
+});
 
 const initialState = {
   username: '',
+  status: 'idle',
+  position: {},
+  address: '',
+  error: '',
 };
 
 const userSlice = createSlice({
@@ -38,15 +45,43 @@ const userSlice = createSlice({
       state.username = action.payload;
     },
   },
+
+  extraReducers: (builder) =>
+    builder
+      .addCase(fetchAddress.pending, (state, action) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAddress.fulfilled, (state, action) => {
+        state.position = action.payload.position;
+        state.address = action.payload.address;
+        state.status = 'idle';
+      })
+      .addCase(fetchAddress.rejected, (state, action) => {
+        state.status = 'error';
+        state.error =
+          'Oops! It seems like you have denied access to your geolocation.';
+      }),
 });
+
+const getUsername = (state) => state.user.username;
+const getStatus = (state) => state.user.status;
+const getLocalisation = (state) => state.user.position;
+const getAddresses = (state) => state.user.address;
+const getError = (state) => state.user.error;
+
+export const getUser = createSelector(
+  [getUsername, getStatus, getLocalisation, getAddresses, getError],
+  (username, status, position, address, error) => {
+    return {
+      username,
+      status,
+      position,
+      address,
+      error,
+    };
+  },
+);
 
 export const { updateName } = userSlice.actions;
 
 export default userSlice.reducer;
-
-const getUsername = (state) => state.user.username;
-
-export const getUsernameSelector = createSelector(
-  [getUsername],
-  (username) => username,
-);

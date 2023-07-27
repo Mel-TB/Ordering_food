@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Form, redirect, useActionData, useNavigation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../../../pages/button/Button';
 import EmptyCart from '../../cart/EmptyCart/EmptyCart';
@@ -8,7 +8,7 @@ import EmptyCart from '../../cart/EmptyCart/EmptyCart';
 import { createOrder } from '../../../services/apiRestaurant';
 import { formatCurrency } from '../../../utils/helpers';
 
-import { getUsernameSelector } from '../../user/userSlice';
+import { fetchAddress, getUser } from '../../user/userSlice';
 import { clearCart, getCart, getTotalCartPrice } from '../../cart/cartslice';
 import store from '../../../store/store';
 
@@ -26,14 +26,31 @@ const CreateOrder = () => {
 
   const formErrors = useActionData();
 
-  const username = useSelector(getUsernameSelector);
+  const dispatch = useDispatch();
+  const handlerAddress = (e) => {
+    e.preventDefault();
+
+    dispatch(fetchAddress());
+  };
+
+  const {
+    username,
+    status: addressStatus,
+    position,
+    address,
+    error: errorAddress,
+  } = useSelector(getUser);
+
   const cart = useSelector(getCart);
   const totalCartPrice = useSelector(getTotalCartPrice);
+
+  const isLoadingAddress = addressStatus === 'loading';
 
   const priorityPrice = withPriority ? totalCartPrice * 0.2 : 0;
   const totalPrice = totalCartPrice + priorityPrice;
 
   if (!cart.length) return <EmptyCart />;
+
   return (
     <div className="px-4 py-6">
       <h2 className="mb-7 text-xl font-semibold">Ready to order? Let's go!</h2>
@@ -62,16 +79,36 @@ const CreateOrder = () => {
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40"> Address </label>
           <div className="grow">
             <input
+              disabled={isLoadingAddress}
+              defaultValue={address}
               className="input w-full"
               type="text"
               name="address"
               required
             />
+
+            {addressStatus === 'error' && (
+              <p className="text- bg- mt-2 rounded-md bg-rose-100 p-2 text-sm text-rose-700">
+                {errorAddress}
+              </p>
+            )}
           </div>
+
+          {!position.latitude && !position.longitude && (
+            <span className="absolute right-[3px] top-[34.5px] z-10 sm:top-[3px] md:right-[3px] md:top-[5px]">
+              <Button
+                type="small"
+                onClick={handlerAddress}
+                disabled={isLoadingAddress}
+              >
+                Get position
+              </Button>
+            </span>
+          )}
         </div>
 
         <div className="mb-11 flex items-center gap-4">
@@ -90,7 +127,18 @@ const CreateOrder = () => {
 
         <div>
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <Button disabled={isSubmitting} type="primary">
+
+          <input
+            type="hidden"
+            name="position"
+            value={
+              position.longitude && position.latitude
+                ? `${position.latitude},${position.longitude}`
+                : ''
+            }
+          />
+
+          <Button disabled={isSubmitting || isLoadingAddress} type="primary">
             {isSubmitting
               ? 'Placing order'
               : `Order now for ${formatCurrency(totalPrice)}`}
@@ -111,6 +159,7 @@ export const action = async ({ request }) => {
     priority: data.priority === 'true',
   };
 
+  console.log(order);
   const errors = {};
   if (!isValidPhone(order.phone)) errors.phone = 'Phone number is incorrect !';
 
