@@ -9,7 +9,7 @@ import { createOrder } from '../../../services/apiRestaurant';
 import { formatCurrency } from '../../../utils/helpers';
 
 import { fetchAddress, getUser } from '../../user/userSlice';
-import { clearCart, getCart, getTotalCartPrice } from '../../cart/cartslice';
+import { clearCart, getCart, getTotalCartPrice } from '../../cart/cartSlices';
 import store from '../../../store/store';
 
 // https://uibakery.io/regex-library/phone-number

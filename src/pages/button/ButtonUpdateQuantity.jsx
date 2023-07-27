@@ -3,7 +3,7 @@ import Button from './Button';
 import {
   decreaseItemQuantity,
   increaseItemQuantity,
-} from '../../features/cart/cartslice';
+} from '../../features/cart/cartSlices';
 
 const ButtonUpdateQuantity = ({ pizzaId, currentQuantity }) => {
   const dispatch = useDispatch();

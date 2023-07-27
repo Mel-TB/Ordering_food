@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 
-import { addItem, getCurrentQuantityById } from '../../cart/cartslice';
+import { addItem, getCurrentQuantityById } from '../../cart/cartSlices';
 
 import Button from '../../../pages/button/Button';
 import DeleteButton from '../../../pages/button/DeleteButton';

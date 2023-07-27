@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 
-import { getCurrentQuantityById } from '../cartslice';
+import { getCurrentQuantityById } from '../cartSlices';
 
 import ButtonUpdateQuantity from '../../../pages/button/ButtonUpdateQuantity';
 import DeleteButton from '../../../pages/button/DeleteButton';
